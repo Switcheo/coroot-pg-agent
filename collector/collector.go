@@ -30,9 +30,9 @@ var (
 
 	dDbQueries = desc("pg_db_queries_per_second", "Number of queries executed in the database per second", "db")
 
-	dTopQueryCalls  = desc("pg_top_query_calls_per_second", "Number of times the query was executed", "db", "user", "query")
-	dTopQueryTime   = desc("pg_top_query_time_per_second", "Time spent executing the query", "db", "user", "query")
-	dTopQueryIOTime = desc("pg_top_query_io_time_per_second", "Time the query spent awaiting IO", "db", "user", "query")
+	dTopQueryCalls  = desc("pg_query_calls", "Number of times the query was executed since last scrape", "db", "user", "query")
+	dTopQueryTime   = desc("pg_query_time", "Average time spent executing the query since last scrape", "db", "user", "query")
+	dTopQueryIOTime = desc("pg_query_io", "Average time the query spent awaiting IO since last scrape", "db", "user", "query")
 
 	dLockAwaitingQueries = desc("pg_lock_awaiting_queries", "Number of queries awaiting a lock", "db", "user", "blocking_query")
 
@@ -255,7 +255,7 @@ func (c *Collector) connectionMetrics(ch chan<- prometheus.Metric) {
 }
 
 func (c *Collector) queryMetrics(ch chan<- prometheus.Metric) {
-	summaries, interval := c.summaries()
+	summaries, _ := c.summaries()
 	if summaries == nil {
 		c.logger.Warning("no summaries")
 		return
@@ -271,14 +271,17 @@ func (c *Collector) queryMetrics(ch chan<- prometheus.Metric) {
 		ch <- gauge(dLatency, v, s)
 	}
 
-	for db, queries := range queriesByDB {
-		ch <- gauge(dDbQueries, queries/interval.Seconds(), db)
-	}
+	//for db, queries := range queriesByDB {
+	//	ch <- gauge(dDbQueries, queries/interval.Seconds(), db)
+	//}
 
-	for k, summary := range top(summaries, topQueriesN) {
-		ch <- gauge(dTopQueryCalls, summary.Queries/interval.Seconds(), k.DB, k.User, k.Query)
-		ch <- gauge(dTopQueryTime, summary.TotalTime/interval.Seconds(), k.DB, k.User, k.Query)
-		ch <- gauge(dTopQueryIOTime, summary.IOTime/interval.Seconds(), k.DB, k.User, k.Query)
+	for k, summary := range summaries {
+		if summary.Queries == 0 {
+			continue
+		}
+		ch <- gauge(dTopQueryCalls, summary.Queries, k.DB, k.User, k.Query)
+		ch <- gauge(dTopQueryTime, summary.TotalTime/summary.Queries, k.DB, k.User, k.Query)
+		ch <- gauge(dTopQueryIOTime, summary.IOTime/summary.Queries, k.DB, k.User, k.Query)
 	}
 }
 
