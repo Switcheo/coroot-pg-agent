@@ -261,15 +261,15 @@ func (c *Collector) queryMetrics(ch chan<- prometheus.Metric) {
 		return
 	}
 
-	latency := NewLatencySummary()
-	queriesByDB := map[string]float64{}
-	for k, summary := range summaries {
-		latency.Add(summary.TotalTime, uint64(summary.Queries))
-		queriesByDB[k.DB] += summary.Queries
-	}
-	for s, v := range latency.GetSummaries(50, 75, 95, 99) {
-		ch <- gauge(dLatency, v, s)
-	}
+	//latency := NewLatencySummary()
+	//queriesByDB := map[string]float64{}
+	//for k, summary := range summaries {
+	//	latency.Add(summary.TotalTime, uint64(summary.Queries))
+	//	queriesByDB[k.DB] += summary.Queries
+	//}
+	//for s, v := range latency.GetSummaries(50, 75, 95, 99) {
+	//	ch <- gauge(dLatency, v, s)
+	//}
 
 	//for db, queries := range queriesByDB {
 	//	ch <- gauge(dDbQueries, queries/interval.Seconds(), db)
