@@ -32,17 +32,15 @@ brew services restart postgresql
 
 ## Create extension
 
-Connect to carbon db
+1. Connect to carbon db
+    ```shell
+    psql carbon
+    ```
 
-```sql
-psql carbon
-```
-
-Create extension
-
-```sql
-CREATE EXTENSION pg_stat_statements;
-```
+2. Create extension
+    ```sql
+    CREATE EXTENSION pg_stat_statements;
+    ```
 
 ## Build the docker image
 1. Clone the repo
@@ -85,8 +83,8 @@ https://github.com/npgsql/efcore.pg/issues/225
 
     ```bash
     - job_name: "postgres"
-    	static_configs:
-    		- targets: [ "localhost:<port>" ]
+      static_configs:
+        - targets: [ "localhost:<port>" ]
     ```
 
 
@@ -102,6 +100,6 @@ ghcr.io/coroot/coroot-pg-agent
 
 ```bash
 - job_name: "postgres"
-	static_configs:
-		- targets: [ "localhost:3002" ]
+  static_configs:
+    - targets: [ "localhost:3002" ]
 ```
