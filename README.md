@@ -1,5 +1,7 @@
 # SET UP 
 
+- Adapted from https://github.com/coroot/coroot-pg-agent
+
 ## Navigate to `postgresql.conf`
 
 - Uncomment these lines
