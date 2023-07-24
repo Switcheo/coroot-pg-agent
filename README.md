@@ -97,7 +97,7 @@ docker run --detach --name coroot-pg-agent \
 --env LISTEN="0.0.0.0:3002" \
 --env PG_SCRAPE_INTERVAL=1s \
 -p 3002:3002 \
-ghcr.io/coroot/coroot-pg-agent
+coroot-pg-agent
 ```
 
 ```bash
